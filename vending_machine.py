@@ -12,21 +12,34 @@ class texts :
     n_enough_coin = "동전이 부족합니다.\n거스름돈은 %s원 입니다"
     select_product = "원하시는 상품번호를 입력하세요"
     select_fault = "잘 못 누르셨습니다"
-    product_out = "선택하신 %s 입니다. 거스름돈은 %s 입니다."
+    product_out = "선택하신 상품의 가격은 %s 입니다. 거스름돈은 %s 입니다."
 
 class Product :
     #제품 종류 , 가격을 코드 변경 없이 데이터를 쉽게 추가하거나 변경 가능
-    ProductType = {"1":"설탕커피", "2":"프림커피","3":"원두커피"}
-    ProductValue = {"1":200 , "2":300 , "3":400}
+    ProductType = {}
+    ProductValue = {}
 
 class CoffeeVM(Product) :
     
-    _name = "커피"
+    
+    _name = "커피"#global변수로 선언
+    _product_info_file = "coffee.txt"#global변수로 선언
     
     def __init__(self):
         #사용자가 자판기 종류를 선택하면 _name 출력한다
         print(texts.title %self._name)
+    def set_products(self):
+        #제품 종류, 가격 리스트를 초기화 한다
+        Product.ProductType = {}
+        Product.ProductValue = {}
+        with open(self._product_info_file,"r",encoding="UTF-8") as fd :
+            for line in fd :
+                list = line.strip("\n").split(',')
+                Product.ProductType[list[0]] = list[1]
+                Product.ProductValue[list[0]]= int(list[2])
     def run(self):
+        print(self._product_info_file)
+        self.set_products()
         while True :
             try :
                 inputCoin = float(input(texts.insert_coin))
@@ -80,13 +93,11 @@ class CoffeeVM(Product) :
             
 class SnackVM(CoffeeVM): #과자 클래스는 커피 클래스를 상속한다
     
-    _name = "과자"
-    
+    _name = "과자"#global변수로 선언
+    _product_info_file = "snack.txt" #global변수로 선언
     def __init__(self):
         #Product 제품 종류, 가격을 Overriding한다.
         print(texts.title %self._name)
-        Product.ProductType = {"1":"오감자", "2":"오징어땅콩","3":"빼빼로","4":"칸쵸"}
-        Product.ProductValue = {"1":400 , "2":500 , "3":600, "4":500}
         
 #############################################################
 if __name__ == '__main__' :
